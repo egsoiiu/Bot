@@ -499,7 +499,7 @@ msg.reply(input_msg).await?;
 // --- Paste this in your handle_callback function ---
 async fn handle_callback(&self, query: CallbackQuery) -> Result<()> {
     match query.data() {
-        Some(b"help") => {
+        b"help" => {
             let reply_markup = reply_markup::inline(vec![
                 vec![
                     button::inline("Back", "back"),
@@ -518,7 +518,7 @@ async fn handle_callback(&self, query: CallbackQuery) -> Result<()> {
             query.answer().send().await?;
             Ok(())
         }
-        Some(b"sample") => {
+        b"sample" => {
             let reply_markup = reply_markup::inline(vec![
                 vec![
                     button::inline("Back", "back"),
@@ -537,7 +537,7 @@ async fn handle_callback(&self, query: CallbackQuery) -> Result<()> {
             query.answer().send().await?;
             Ok(())
         }
-        Some(b"back") => {
+        b"back" => {
             let reply_markup = reply_markup::inline(vec![
                 vec![
                     button::inline("Help", "help"),
@@ -566,13 +566,16 @@ async fn handle_callback(&self, query: CallbackQuery) -> Result<()> {
             query.answer().send().await?;
             Ok(())
         }
-        Some(b"cancel") => {
-            self.handle_cancel(query).await
-        }
-        _ => Ok(()),
+        
+        
+        
+        b"cancel" => self.handle_cancel(query).await,
+            _ => Ok(()),
     }
 }
 
+
+    
     /// Handle the cancel button.
     async fn handle_cancel(&self, query: CallbackQuery) -> Result<()> {
         let started_by_user_id = match self.started_by.get(&query.chat().id()) {
