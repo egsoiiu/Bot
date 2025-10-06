@@ -499,7 +499,7 @@ msg.reply(input_msg).await?;
 // --- Paste this in your handle_callback function ---
 async fn handle_callback(&self, query: CallbackQuery) -> Result<()> {
     match query.data() {
-        b"help" => {
+        Some(b"help") => {
             let reply_markup = reply_markup::inline(vec![
                 vec![
                     button::inline("Back", "back"),
@@ -518,7 +518,7 @@ async fn handle_callback(&self, query: CallbackQuery) -> Result<()> {
             query.answer().send().await?;
             Ok(())
         }
-        b"sample" => {
+        Some(b"sample") => {
             let reply_markup = reply_markup::inline(vec![
                 vec![
                     button::inline("Back", "back"),
@@ -537,7 +537,7 @@ async fn handle_callback(&self, query: CallbackQuery) -> Result<()> {
             query.answer().send().await?;
             Ok(())
         }
-        b"back" => {
+        Some(b"back") => {
             let reply_markup = reply_markup::inline(vec![
                 vec![
                     button::inline("Help", "help"),
@@ -566,7 +566,9 @@ async fn handle_callback(&self, query: CallbackQuery) -> Result<()> {
             query.answer().send().await?;
             Ok(())
         }
-        // Add your other callback handlers (e.g. "cancel") here
+        Some(b"cancel") => {
+            self.handle_cancel(query).await
+        }
         _ => Ok(()),
     }
 }
