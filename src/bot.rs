@@ -321,10 +321,10 @@ let is_video = response
 info!("File {} ({} bytes, video: {})", name, length, is_video);
 
 // Check for empty file
-//if length == 0 {
- //   msg.reply("⚠️ File is empty").await?;
-//    return Ok(());
-// }
+if length == 0 {
+    msg.reply("⚠️ File is empty").await?;
+    return Ok(());
+ }
 
     // File is too large
     if length > 2 * 1024 * 1024 * 1024 {
@@ -464,34 +464,34 @@ fn format_eta(seconds: u64) -> String {
 }
 
             
-            
-            
-            
+            // Upload the file
+let start_time = chrono::Utc::now();
+let file = self
+    .client
+    .upload_stream(&mut stream, length, name.clone())
+    .await?;
 
-        // Upload the file
-        let start_time = chrono::Utc::now();
-        let file = self
-            .client
-            .upload_stream(&mut stream, length, name.clone())
-            .await?;
+// Calculate upload time
+let elapsed = chrono::Utc::now() - start_time;
+info!("Uploaded file {} ({} bytes) in {}", name, length, elapsed);
 
-        // Calculate upload time
-        let elapsed = chrono::Utc::now() - start_time;
-        info!("Uploaded file {} ({} bytes) in {}", name, length, elapsed);
+// Remove extension from caption only
+let caption_name = if let Some(dot_pos) = name.rfind('.') {
+    &name[0..dot_pos]  // Everything before the last dot
+} else {
+    &name  // No extension found, use original name
+};
 
-        // Send file
-let mut input_msg = InputMessage::html(name.clone());
+// Send file with name without extension as caption
+let mut input_msg = InputMessage::html(caption_name.to_string());
 input_msg = input_msg.document(file); // Always upload as document
-
-
 
 msg.reply(input_msg).await?;
 
+// Delete status message
+status.lock().await.delete().await?;
 
-        // Delete status message
-        status.lock().await.delete().await?;
-
-        Ok(())
+Ok(())
     }
 
 
