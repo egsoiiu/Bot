@@ -321,10 +321,10 @@ let is_video = response
 info!("File {} ({} bytes, video: {})", name, length, is_video);
 
 // Check for empty file
-if length == 0 {
-    msg.reply("⚠️ File is empty").await?;
-    return Ok(());
-}
+//if length == 0 {
+ //   msg.reply("⚠️ File is empty").await?;
+//    return Ok(());
+// }
 
     // File is too large
     if length > 2 * 1024 * 1024 * 1024 {
